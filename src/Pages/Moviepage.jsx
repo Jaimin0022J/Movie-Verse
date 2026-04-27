@@ -357,26 +357,41 @@ const Moviepage = () => {
               )}
             </div>
 
-            <div style={{ marginBottom: 28 }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 6,
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                }}
-              >
-                <span>Audience Score</span>
-                <span style={{ fontWeight: 700, color: "var(--accent-gold)" }}>
-                  {ratingPct}%
-                </span>
-              </div>
-              <div className="rating-bar-track">
+            <div className="w-full" style={{ marginBottom: 28 }}>
+              {/* Mobile UI (Current) */}
+              <div className="md:hidden">
                 <div
-                  className="rating-bar-fill"
-                  style={{ width: `${ratingPct}%` }}
-                />
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: 6,
+                    fontSize: 12,
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <span>Audience Score</span>
+                  <span style={{ fontWeight: 700, color: "var(--accent-gold)" }}>
+                    {ratingPct}%
+                  </span>
+                </div>
+                <div className="rating-bar-track">
+                  <div
+                    className="rating-bar-fill"
+                    style={{ width: `${ratingPct}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Laptop UI (Long) */}
+              <div className="hidden md:flex items-center gap-4">
+                <span style={{ fontSize: 13, color: "var(--text-muted)", whiteSpace: "nowrap", fontWeight: 600 }}>Audience Score</span>
+                <div className="rating-bar-track" style={{ flex: 1, height: 6 }}>
+                  <div
+                    className="rating-bar-fill"
+                    style={{ width: `${ratingPct}%` }}
+                  />
+                </div>
+                <span style={{ fontWeight: 800, color: "var(--accent-gold)", fontSize: 14, minWidth: 40 }}>{ratingPct}%</span>
               </div>
             </div>
 
