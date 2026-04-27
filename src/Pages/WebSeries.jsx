@@ -105,38 +105,35 @@ const WebSeries = ({ addToFavorite, favorites }) => {
   }, [searchQuery, selectedGenre, activeTab]);
 
   useEffect(() => {
-    fetchData(1, searchQuery, null, activeTab);
-  }, [activeTab, fetchData, searchQuery]);
-
-  useEffect(() => {
-    if (page > 1) fetchData(page);
-  }, [page, fetchData]);
-
-  useEffect(() => {
-    clearTimeout(searchTimeout.current);
-    if (!searchQuery.trim()) {
-      if (page !== 1) setPage(1);
-      else fetchData(1, "", selectedGenre, activeTab);
-      return;
+    if (page === 1) {
+      clearTimeout(searchTimeout.current);
+      
+      if (!searchQuery.trim()) {
+        fetchData(1, "", selectedGenre, activeTab);
+      } else {
+        searchTimeout.current = setTimeout(() => {
+          fetchData(1, searchQuery, selectedGenre, activeTab);
+        }, 500);
+      }
     }
-    searchTimeout.current = setTimeout(() => {
-      setPage(1);
-      fetchData(1, searchQuery, selectedGenre, activeTab);
-    }, 400);
 
     return () => clearTimeout(searchTimeout.current);
-  }, [searchQuery, fetchData, selectedGenre, activeTab, page]);
+  }, [searchQuery, selectedGenre, activeTab, fetchData, page]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchData(page);
+    }
+  }, [page, fetchData]);
 
   const handleGenreClick = (genreId) => {
     if (selectedGenre === genreId) {
       setSelectedGenre(null);
       setPage(1);
-      fetchData(1, searchQuery, null, activeTab);
       return;
     }
     setSelectedGenre(genreId);
     setPage(1);
-    fetchData(1, searchQuery, genreId, activeTab);
   };
 
   useEffect(() => {

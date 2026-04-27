@@ -94,31 +94,24 @@ const Home = ({ addToFavorite, favorites }) => {
 
   useEffect(() => {
     clearTimeout(searchTimeout.current);
-
-    const resetAndFetch = () => {
-      fetchMovies(searchMovie, selectedGenre, activeTab);
-    };
-
+    
     if (!searchMovie.trim()) {
-      resetAndFetch();
-      return;
+      fetchMovies();
+    } else {
+      searchTimeout.current = setTimeout(() => {
+        fetchMovies();
+      }, 500);
     }
 
-    searchTimeout.current = setTimeout(() => {
-      resetAndFetch();
-    }, 400);
-
     return () => clearTimeout(searchTimeout.current);
-  }, [searchMovie, fetchMovies, selectedGenre, activeTab]);
+  }, [searchMovie, selectedGenre, activeTab, fetchMovies]);
 
   const handleGenreClick = (genreId) => {
     if (selectedGenre === genreId) {
       setSelectedGenre(null);
-      fetchMovies(searchMovie, null, activeTab);
       return;
     }
     setSelectedGenre(genreId);
-    fetchMovies(searchMovie, genreId, activeTab);
   };
 
   useEffect(() => {
