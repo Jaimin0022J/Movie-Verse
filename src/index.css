@@ -41,12 +41,11 @@
 }
 
 [data-theme='light'] {
-
   --bg-primary: #f8fafc;
   --bg-secondary: #f1f5f9;
   --bg-card: #ffffff;
   --bg-glass: rgba(255, 255, 255, 0.7);
-  --border-glass: rgba(0, 0, 0, 0.05);
+  --border-glass: rgba(0, 0, 0, 0.08);
 
   --text-primary: #0f172a;
   --text-secondary: #334155;
@@ -54,14 +53,14 @@
 
   --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   --gradient-card: linear-gradient(145deg, #ffffff, #fdfdfd);
-  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
 
   --glass-bg-nav: rgba(255, 255, 255, 0.8);
   --glass-bg-nav-hover: rgba(255, 255, 255, 0.95);
-  --glass-bg-strong: rgba(0, 0, 0, 0.06);
+  --glass-bg-strong: rgba(0, 0, 0, 0.04);
   --glass-bg-input: rgba(255, 255, 255, 0.8);
-  --glass-border-light: rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-border-light: rgba(0, 0, 0, 0.1);
+  --glass-border: rgba(0, 0, 0, 0.12);
   --overlay-dark: rgba(255, 255, 255, 0.9);
 
   --overlay-hero-base: rgba(248, 250, 252, 1);
@@ -72,7 +71,7 @@
   --skeleton-bg: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
   --nav-scrolled: rgba(248, 250, 252, 0.9);
   --nav-backdrop: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
-  --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.08);
 }
 
 @layer base {
