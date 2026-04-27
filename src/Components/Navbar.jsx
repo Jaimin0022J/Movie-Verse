@@ -250,42 +250,44 @@ const Navbar = ({
                   e.currentTarget.style.background = "var(--glass-bg-nav)";
                 }}
               >
-                <i className="ri-home-4-fill" />
-                <span className="nav-actions-text">Home</span>
+                <i className={isWebSeries ? "ri-film-fill" : "ri-home-4-fill"} />
+                <span className="nav-actions-text">{isWebSeries ? "Movies" : "Home"}</span>
               </Link>
             )}
 
-            <Link
-              to="/web-series"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "9px 18px",
-                borderRadius: 50,
-                background: location.pathname === "/web-series"
-                  ? "var(--accent-purple)"
-                  : "var(--glass-bg-nav)",
-                border: `1px solid ${location.pathname === "/web-series" ? "var(--accent-purple)" : "var(--glass-border)"}`,
-                color: location.pathname === "/web-series" ? "#ffffff" : "var(--text-primary)",
-                textDecoration: "none",
-                fontSize: 14,
-                fontWeight: 600,
-                transition: "all 0.25s ease",
-                boxShadow: location.pathname === "/web-series" ? "0 4px 15px rgba(139,92,246,0.4)" : "none",
-              }}
-              onMouseEnter={(e) => {
-                if (location.pathname !== "/web-series")
-                  e.currentTarget.style.background = "rgba(139,92,246,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                if (location.pathname !== "/web-series")
-                  e.currentTarget.style.background = "var(--glass-bg-nav)";
-              }}
-            >
-              <i className="ri-tv-line" />
-              <span className="nav-actions-text">Web Series</span>
-            </Link>
+            {!isWebSeries && (
+              <Link
+                to="/web-series"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "9px 18px",
+                  borderRadius: 50,
+                  background: location.pathname === "/web-series"
+                    ? "var(--accent-purple)"
+                    : "var(--glass-bg-nav)",
+                  border: `1px solid ${location.pathname === "/web-series" ? "var(--accent-purple)" : "var(--glass-border)"}`,
+                  color: location.pathname === "/web-series" ? "#ffffff" : "var(--text-primary)",
+                  textDecoration: "none",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  transition: "all 0.25s ease",
+                  boxShadow: location.pathname === "/web-series" ? "0 4px 15px rgba(139,92,246,0.4)" : "none",
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== "/web-series")
+                    e.currentTarget.style.background = "rgba(139,92,246,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== "/web-series")
+                    e.currentTarget.style.background = "var(--glass-bg-nav)";
+                }}
+              >
+                <i className="ri-tv-line" />
+                <span className="nav-actions-text">Web Series</span>
+              </Link>
+            )}
 
             <Link
               to="/favorite"
