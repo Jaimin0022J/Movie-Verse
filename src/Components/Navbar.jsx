@@ -250,7 +250,7 @@ const Navbar = ({
                   e.currentTarget.style.background = "var(--glass-bg-nav)";
                 }}
               >
-                <i className={isWebSeries ? "ri-film-fill" : "ri-home-4-fill"} />
+                <i className={isWebSeries ? "ri-movie-2-fill" : "ri-home-4-fill"} />
                 <span className="nav-actions-text">{isWebSeries ? "Movies" : "Home"}</span>
               </Link>
             )}
