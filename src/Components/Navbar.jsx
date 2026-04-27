@@ -255,7 +255,7 @@ const Navbar = ({
               </Link>
             )}
 
-            {!isWebSeries && !location.pathname.startsWith("/movie/") && !location.pathname.startsWith("/tv/") && (
+            {!isWebSeries && !isFavorite && !location.pathname.startsWith("/movie/") && !location.pathname.startsWith("/tv/") && (
               <Link
                 to="/web-series"
                 style={{
