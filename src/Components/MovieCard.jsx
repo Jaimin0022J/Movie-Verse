@@ -157,6 +157,10 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
           padding: "12px 14px",
           background: "var(--gradient-card)",
           borderTop: "1px solid var(--glass-border-light)",
+          minHeight: "75px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <h3

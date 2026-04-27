@@ -7,7 +7,7 @@ import { ThemeProvider } from "./ThemeContext";
 
 createRoot(document.getElementById("root")).render(
   <ThemeProvider>
-    <BrowserRouter basename="/Movie-Verse/">
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </ThemeProvider>,

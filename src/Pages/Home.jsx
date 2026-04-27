@@ -33,29 +33,15 @@ const Home = ({ addToFavorite, favorites }) => {
   const [heroIndex, setHeroIndex] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fetchingMore, setFetchingMore] = useState(false);
   const [activeTab, setActiveTab] = useState("latest");
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [heroLoaded, setHeroLoaded] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
 
   const searchTimeout = useRef(null);
   const heroRef = useRef(null);
-  const observer = useRef();
 
 
-  const lastMovieElementRef = useCallback(node => {
-    if (loading || fetchingMore) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prevPage => prevPage + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, fetchingMore, hasMore]);
 
   useEffect(() => {
     getGenres()
@@ -64,81 +50,75 @@ const Home = ({ addToFavorite, favorites }) => {
   }, []);
 
 
-  const fetchMovies = useCallback(async (pageNum = 1, forceSearch = null, forceGenre = null, forceTab = null) => {
+  const fetchMovies = useCallback(async (forceSearch = null, forceGenre = null, forceTab = null) => {
     const activeSearch = forceSearch !== null ? forceSearch : searchMovie;
     const activeGen = forceGenre !== null ? forceGenre : selectedGenre;
     const activeT = forceTab !== null ? forceTab : activeTab;
 
-    if (pageNum === 1) setLoading(true);
-    else setFetchingMore(true);
+    setLoading(true);
     setError(null);
 
     try {
-      let results;
-      if (activeSearch.trim()) {
-        results = await searchMovies(activeSearch, pageNum);
-      } else if (activeGen) {
-        results = await getMoviesByGenre(activeGen, pageNum);
-      } else {
-        if (activeT === "trending")  results = await getTrendingMovies("week", pageNum);
-        else if (activeT === "popular")   results = await getPopularMovies(pageNum);
-        else if (activeT === "top_rated") results = await getTopRatedMovies(pageNum);
-        else if (activeT === "now")       results = await getNowPlaying(pageNum);
-        else if (activeT === "bollywood") results = await getBollywoodMovies(pageNum);
-        else if (activeT === "latest")    results = await getLatestMovies(pageNum);
-        else results = await getPopularMovies(pageNum);
-      }
+      const getResults = async (p) => {
+        if (activeSearch.trim()) return await searchMovies(activeSearch, p);
+        if (activeGen) return await getMoviesByGenre(activeGen, p);
+        if (activeT === "trending")  return await getTrendingMovies("week", p);
+        if (activeT === "popular")   return await getPopularMovies(p);
+        if (activeT === "top_rated") return await getTopRatedMovies(p);
+        if (activeT === "now")       return await getNowPlaying(p);
+        if (activeT === "bollywood") return await getBollywoodMovies(p);
+        if (activeT === "latest")    return await getLatestMovies(p);
+        return await getPopularMovies(p);
+      };
 
-      setMovies(prev => pageNum === 1 ? results : [...prev, ...results]);
-      setHasMore(results.length > 0);
+      // Fetch two pages to ensure we have at least 25 movies (TMDB returns 20 per page)
+      const [page1, page2] = await Promise.all([getResults(1), getResults(2)]);
+      const combinedResults = [...page1, ...page2].slice(0, 25);
 
-      if (pageNum === 1 && results.length > 0) {
-        setHeroMovies(results.slice(0, 5));
+      setMovies(combinedResults);
+
+      if (combinedResults.length > 0) {
+        setHeroMovies(combinedResults.slice(0, 5));
         setHeroIndex(0);
-      } else if (pageNum === 1) {
+      } else {
         setHeroMovies([]);
       }
     } catch {
       setError("Failed to load movies. Check your connection and try again.");
     } finally {
-      if (pageNum === 1) setLoading(false);
-      else setFetchingMore(false);
+      setLoading(false);
     }
   }, [searchMovie, selectedGenre, activeTab]);
 
-  useEffect(() => {
-    fetchMovies(1, "", null, activeTab);
-  }, [activeTab, fetchMovies]);
 
-  useEffect(() => {
-    if (page > 1) fetchMovies(page);
-  }, [page, fetchMovies]);
 
   useEffect(() => {
     clearTimeout(searchTimeout.current);
+
+    const resetAndFetch = () => {
+      fetchMovies(searchMovie, selectedGenre, activeTab);
+    };
+
     if (!searchMovie.trim()) {
-      if (page !== 1) setPage(1);
-      else fetchMovies(1, "", selectedGenre, activeTab);
+      resetAndFetch();
       return;
     }
+
     searchTimeout.current = setTimeout(() => {
-      setPage(1);
-      fetchMovies(1, searchMovie, selectedGenre, activeTab);
+      resetAndFetch();
     }, 400);
 
     return () => clearTimeout(searchTimeout.current);
-  }, [searchMovie, fetchMovies, selectedGenre, activeTab, page]);
+  }, [searchMovie, fetchMovies, selectedGenre, activeTab]);
 
   const handleGenreClick = (genreId) => {
     if (selectedGenre === genreId) {
       setSelectedGenre(null);
-      setPage(1);
-      fetchMovies(1, searchMovie, null, activeTab);
+      fetchMovies(searchMovie, null, activeTab);
       return;
     }
     setSelectedGenre(genreId);
-    setPage(1);
-    fetchMovies(1, searchMovie, genreId, activeTab);
+    fetchMovies(searchMovie, genreId, activeTab);
   };
 
   useEffect(() => {
@@ -318,10 +298,11 @@ const Home = ({ addToFavorite, favorites }) => {
       )}
 
       <div
-        className={(isSearching || !heroMovie) ? "pt-[100px] px-4 md:px-8 pb-10" : "pt-8 px-4 md:px-8 pb-10"}
+        className="px-4 md:px-8 pb-10"
         style={{
           maxWidth: 1600,
           margin: "0 auto",
+          paddingTop: (isSearching || !heroMovie) ? "87px" : "32px",
         }}
       >
 
@@ -479,7 +460,7 @@ const Home = ({ addToFavorite, favorites }) => {
             ) : (
               <div className="movies-grid">
                 {movies.map((movie, i) => (
-                  <div key={movie.id} ref={i === movies.length - 1 ? lastMovieElementRef : null}>
+                  <div key={movie.id}>
                     <MovieCard
                       movie={movie}
                       index={i}

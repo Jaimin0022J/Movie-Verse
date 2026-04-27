@@ -65,10 +65,10 @@ const Navbar = ({
           >
             <div
               style={{
-                width: 38,
-                height: 38,
+                width: 48,
+                height: 48,
                 background: "var(--accent-red)",
-                borderRadius: 11,
+                borderRadius: 12,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -77,7 +77,7 @@ const Navbar = ({
             >
               <i
                 className="ri-film-fill"
-                style={{ color: "white", fontSize: 20 }}
+                style={{ color: "white", fontSize: 24 }}
               />
             </div>
             <span
