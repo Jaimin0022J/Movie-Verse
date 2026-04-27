@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Favorite from "./Pages/Favorite";
 import Moviepage from "./Pages/Moviepage";
@@ -48,6 +48,7 @@ const App = () => {
           <WebSeries addToFavorite={addToFavorite} favorites={favorites} />
         }
       />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

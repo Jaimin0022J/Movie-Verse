@@ -2,26 +2,6 @@ import React, { useState } from "react";
 
 const SERVERS = [
   {
-    id: "vidsrc.me",
-    name: "VidSrc.me",
-    description: "(Fast / HD)",
-    referrerPolicy: "origin",
-    getUrl: (mediaType, tmdbId, season, episode) => 
-      mediaType === 'tv' 
-        ? `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`
-        : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`
-  },
-  {
-    id: "vidsrc.pro",
-    name: "VidSrc PRO",
-    description: "(Ad-Free / HD)",
-    referrerPolicy: "origin",
-    getUrl: (mediaType, tmdbId, season, episode) => 
-      mediaType === 'tv' 
-        ? `https://vidsrc.pro/embed/tv/${tmdbId}/${season}/${episode}`
-        : `https://vidsrc.pro/embed/movie/${tmdbId}`
-  },
-  {
     id: "superembed",
     name: "SuperEmbed",
     description: "(Multi-audio / Hindi)",
