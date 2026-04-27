@@ -357,7 +357,7 @@ const Moviepage = () => {
               )}
             </div>
 
-            <div style={{ marginBottom: 28 }}>
+            <div className="audience-score-container">
               <div
                 style={{
                   display: "flex",

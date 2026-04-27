@@ -661,6 +661,18 @@ body {
   transition: width 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+.audience-score-container {
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+  .audience-score-container {
+    max-width: 600px;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    Watch On — Premium OTT Provider Section
 ══════════════════════════════════════════════════════════════ */
