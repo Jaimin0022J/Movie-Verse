@@ -53,7 +53,7 @@
 
   --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   --gradient-card: linear-gradient(145deg, #ffffff, #fdfdfd);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.07);
 
   --glass-bg-nav: rgba(255, 255, 255, 0.8);
   --glass-bg-nav-hover: rgba(255, 255, 255, 0.95);
@@ -71,7 +71,7 @@
   --skeleton-bg: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
   --nav-scrolled: rgba(248, 250, 252, 0.9);
   --nav-backdrop: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
-  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 25px 60px rgba(0, 0, 0, 0.12);
 }
 
 @layer base {
