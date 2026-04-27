@@ -79,7 +79,7 @@ const Favorite = ({ favorites = [], removeFromFavorite }) => {
       </div>
 
       <div
-        className="px-4 md:px-8 pb-[60px]"
+        className="px-[10px] lg:px-8 pb-[60px]"
         style={{
           maxWidth: 1200,
           margin: "0 auto",

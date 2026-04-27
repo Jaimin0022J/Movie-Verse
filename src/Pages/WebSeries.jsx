@@ -240,7 +240,7 @@ const WebSeries = ({ addToFavorite, favorites }) => {
           </div>
         )}
 
-        <div className={(isSearching || !heroItem) ? "pt-[100px] px-4 md:px-8 pb-10" : "pt-8 px-4 md:px-8 pb-10"} style={{ maxWidth: 1600, margin: "0 auto" }}>
+        <div className={(isSearching || !heroItem) ? "pt-[100px] px-[10px] lg:px-8 pb-10" : "pt-8 px-[10px] lg:px-8 pb-10"} style={{ maxWidth: 1600, margin: "0 auto" }}>
           {!isSearching ? (
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24, overflowX: "auto", paddingBottom: 4 }}>

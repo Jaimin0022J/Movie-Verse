@@ -20,7 +20,7 @@ export default function StreamingSection({ tmdbId, mediaType = "movie", season =
   const currentUrl = selectedServer.getUrl(mediaType, tmdbId, season, episode);
 
   return (
-    <div id="streaming-section-target" className="w-full max-w-5xl mx-auto px-4 py-10">
+    <div id="streaming-section-target" className="w-full max-w-5xl mx-auto px-[10px] lg:px-8 py-10">
       {/* Video Player Container */}
       <div className="relative w-full aspect-video rounded-xl border border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] overflow-hidden bg-black group transition-all duration-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.8)]">
         {!isPlayerVisible ? (

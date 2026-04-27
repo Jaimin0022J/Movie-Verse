@@ -250,7 +250,7 @@ const Moviepage = () => {
         />
       </div>
       <div
-        className="px-4 md:px-8 pb-[60px]"
+        className="px-[10px] lg:px-8 pb-[60px]"
         style={{
           maxWidth: 1200,
           margin: "-140px auto 0",
@@ -258,32 +258,14 @@ const Moviepage = () => {
           zIndex: 10,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: 48,
-            flexWrap: "wrap",
-            alignItems: "flex-start",
-          }}
-        >
-
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
           <div
-            className="animate-slide-left"
-            style={{
-              flexShrink: 0,
-              width: 260,
-              borderRadius: 20,
-              overflow: "hidden",
-              boxShadow: "var(--shadow-card)",
-              border: "1px solid var(--glass-border-light)",
-              background: "var(--bg-card)",
-              minHeight: 390,
-            }}
+            className="animate-slide-left shrink-0 w-[200px] md:w-[260px] min-h-[300px] md:min-h-[390px] rounded-[20px] overflow-hidden shadow-[var(--shadow-card)] border border-[var(--glass-border-light)] bg-[var(--bg-card)] mx-auto md:mx-0"
           >
             {!imgLoaded && (
               <div
                 className="skeleton"
-                style={{ width: "100%", height: 390 }}
+                style={{ width: "100%", height: "100%", minHeight: "300px" }}
               />
             )}
               {poster && (
@@ -301,11 +283,10 @@ const Moviepage = () => {
           </div>
 
           <div
-            className="animate-slide-right"
-            style={{ flex: 1, minWidth: 280, paddingTop: 120 }}
+            className="animate-slide-right flex-1 min-w-full md:min-w-[280px] pt-2 md:pt-[120px] flex flex-col items-center md:items-start text-center md:text-left"
           >
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+            <div className="flex flex-wrap gap-2 mb-4 justify-center md:justify-start">
               {genres.map((g) => (
                 <span key={g.id} className="genre-pill">{g.name}</span>
               ))}
@@ -340,13 +321,7 @@ const Moviepage = () => {
             )}
 
             <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 16,
-                marginBottom: 24,
-                alignItems: "center",
-              }}
+              className="flex flex-wrap gap-4 mb-6 items-center justify-center md:justify-start"
             >
               <span className="rating-badge" style={{ fontSize: 14, padding: "5px 12px" }}>
                 <i className="ri-star-fill" />
@@ -405,7 +380,7 @@ const Moviepage = () => {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
+            <div className="flex gap-3 flex-wrap mb-8 justify-center md:justify-start w-full">
 
                <button
                   onClick={() => {

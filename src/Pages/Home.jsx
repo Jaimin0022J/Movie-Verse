@@ -298,7 +298,7 @@ const Home = ({ addToFavorite, favorites }) => {
       )}
 
       <div
-        className="px-4 md:px-8 pb-10"
+        className="px-[10px] lg:px-8 pb-10"
         style={{
           maxWidth: 1600,
           margin: "0 auto",
