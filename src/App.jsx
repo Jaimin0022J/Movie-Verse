@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./Pages/Home";
 import Favorite from "./Pages/Favorite";
 import Moviepage from "./Pages/Moviepage";
@@ -26,6 +26,8 @@ const App = () => {
     setFavorites((prev) => prev.filter((movie) => movie.id !== id));
   };
 
+  const location = useLocation();
+
   return (
     <Routes>
       <Route
@@ -38,8 +40,8 @@ const App = () => {
           <Favorite favorites={favorites} removeFromFavorite={removeFromFavorite} />
         }
       />
-      <Route path="/movie/:id" element={<Moviepage key={window.location.pathname} />} />
-      <Route path="/tv/:id" element={<Moviepage key={window.location.pathname} />} />
+      <Route path="/movie/:id" element={<Moviepage key={location.pathname} />} />
+      <Route path="/tv/:id" element={<Moviepage key={location.pathname} />} />
       <Route
         path="/web-series"
         element={
