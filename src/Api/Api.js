@@ -1,5 +1,5 @@
 const API_KEY = "435cfbd8a60ad630664daddfec1e546e";
-const BASE_URL = "https://api.themoviedb.org/3";
+const BASE_URL = "/api/tmdb";
 
 const apiCache = new Map();
 
@@ -8,25 +8,11 @@ async function proxyFetch(url) {
     return apiCache.get(url).clone();
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!res.ok) throw new Error("Fallback required");
-    
-    apiCache.set(url, res.clone());
-    return res;
-  } catch {
-    clearTimeout(timeoutId);
-    console.warn("Direct fetch timed out or failed, using fast proxy fallback...");
-    
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const proxyRes = await fetch(proxyUrl);
-    if (proxyRes.ok) apiCache.set(url, proxyRes.clone());
-    return proxyRes;
-  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Fetch failed");
+  
+  apiCache.set(url, res.clone());
+  return res;
 }
 
 async function handleResponse(res) {
