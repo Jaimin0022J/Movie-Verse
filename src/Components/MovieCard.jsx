@@ -60,46 +60,28 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
         />
 
         <div className="card-overlay">
-          <div style={{ width: "100%" }}>
-            <h3
-              style={{
-                color: "white",
-                fontWeight: 700,
-                fontSize: 14,
-                lineHeight: 1.3,
-                marginBottom: 6,
-              }}
-            >
-              {title}
-            </h3>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span className="rating-badge">
-                <i className="ri-star-fill" style={{ fontSize: 10 }} />
-                {rating}
-              </span>
-              {year && (
-                <span
-                  style={{
-                    color: "rgba(255,255,255,0.5)",
-                    fontSize: 12,
-                    fontWeight: 500,
-                  }}
-                >
-                  {year}
-                </span>
-              )}
-            </div>
+          <div className="flex flex-col items-center justify-center w-full h-full">
             <div
               style={{
-                marginTop: 10,
+                background: "rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "50px",
+                padding: "10px 20px",
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 12,
+                gap: 8,
+                color: "white",
+                fontSize: 13,
+                fontWeight: 700,
+                transform: "translateY(20px)",
+                opacity: 0,
+                transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
               }}
+              className="view-details-pill"
             >
-              <i className="ri-information-line" style={{ color: "var(--accent-red)", fontSize: 16 }} />
+              <i className="ri-play-circle-fill" style={{ fontSize: 20, color: "var(--accent-red)" }} />
               View Details
             </div>
           </div>
@@ -168,10 +150,13 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
             fontWeight: 700,
             fontSize: 13,
             color: "var(--text-primary)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
             marginBottom: 4,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            lineHeight: 1.4,
+            height: "2.8em", // Fixed height for 2 lines
           }}
         >
           {title}

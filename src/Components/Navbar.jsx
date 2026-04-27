@@ -226,7 +226,7 @@ const Navbar = ({
               />
             </button>
 
-            {!isHome && !isWebSeries && (
+            {!isHome && (
               <Link
                 to="/"
                 style={{
@@ -256,35 +256,35 @@ const Navbar = ({
             )}
 
             <Link
-              to={isWebSeries ? "/" : "/web-series"}
+              to="/web-series"
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
                 padding: "9px 18px",
                 borderRadius: 50,
-                background: isWebSeries
+                background: location.pathname === "/web-series"
                   ? "var(--accent-purple)"
-                  : (location.pathname === "/web-series" ? "var(--accent-purple)" : "var(--glass-bg-nav)"),
-                border: `1px solid ${isWebSeries || location.pathname === "/web-series" ? "var(--accent-purple)" : "var(--glass-border)"}`,
-                color: isWebSeries || location.pathname === "/web-series" ? "#ffffff" : "var(--text-primary)",
+                  : "var(--glass-bg-nav)",
+                border: `1px solid ${location.pathname === "/web-series" ? "var(--accent-purple)" : "var(--glass-border)"}`,
+                color: location.pathname === "/web-series" ? "#ffffff" : "var(--text-primary)",
                 textDecoration: "none",
                 fontSize: 14,
                 fontWeight: 600,
                 transition: "all 0.25s ease",
-                boxShadow: isWebSeries || location.pathname === "/web-series" ? "0 4px 15px rgba(139,92,246,0.4)" : "none",
+                boxShadow: location.pathname === "/web-series" ? "0 4px 15px rgba(139,92,246,0.4)" : "none",
               }}
               onMouseEnter={(e) => {
-                if (!isWebSeries && location.pathname !== "/web-series")
+                if (location.pathname !== "/web-series")
                   e.currentTarget.style.background = "rgba(139,92,246,0.15)";
               }}
               onMouseLeave={(e) => {
-                if (!isWebSeries && location.pathname !== "/web-series")
+                if (location.pathname !== "/web-series")
                   e.currentTarget.style.background = "var(--glass-bg-nav)";
               }}
             >
-              <i className={isWebSeries ? "ri-film-line" : "ri-tv-line"} />
-              <span className="nav-actions-text">{isWebSeries ? "Movies" : "Web Series"}</span>
+              <i className="ri-tv-line" />
+              <span className="nav-actions-text">Web Series</span>
             </Link>
 
             <Link

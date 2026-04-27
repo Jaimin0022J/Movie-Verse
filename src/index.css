@@ -263,21 +263,23 @@ body {
 .movie-card .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.5) 40%,
-    transparent 70%
-  );
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: 16px;
 }
 
 .movie-card:hover .card-overlay {
   opacity: 1;
+}
+
+.movie-card:hover .view-details-pill {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
 }
 
 .movie-card img {
