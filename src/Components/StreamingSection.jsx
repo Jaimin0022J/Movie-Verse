@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 const SERVERS = [
   {
-    id: "superembed",
-    name: "SuperEmbed",
-    description: "(Multi-audio / Hindi)",
+    id: "vidlink",
+    name: "Premium Server",
+    description: "(Ultra Fast / No Buffering)",
     referrerPolicy: "origin",
     getUrl: (mediaType, tmdbId, season, episode) => 
       mediaType === 'tv' 
-        ? `https://multiembed.cc/embed/tv/${tmdbId}/${season}/${episode}`
-        : `https://multiembed.cc/embed/movie/${tmdbId}`
+        ? `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}`
+        : `https://vidlink.pro/movie/${tmdbId}`
   }
 ];
 
