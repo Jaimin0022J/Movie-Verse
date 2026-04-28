@@ -67,17 +67,19 @@ const Navbar = ({
               style={{
                 width: 48,
                 height: 48,
-                background: "var(--accent-red)",
+                background: "var(--glass-bg-nav)",
+                border: "1px solid var(--glass-border)",
                 borderRadius: 12,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 4px 15px rgba(229,9,20,0.4)",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
               }}
             >
-              <i
-                className="ri-film-fill"
-                style={{ color: "white", fontSize: 24 }}
+              <img 
+                src="/logo.png" 
+                alt="MovieVerse Logo" 
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 12 }} 
               />
             </div>
             <span
