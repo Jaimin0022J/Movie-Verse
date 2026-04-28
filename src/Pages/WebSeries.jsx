@@ -41,19 +41,6 @@ const WebSeries = ({ addToFavorite, favorites }) => {
   const [hasMore, setHasMore] = useState(true);
 
   const searchTimeout = useRef(null);
-  const observer = useRef();
-
-
-  const lastElementRef = useCallback(node => {
-    if (loading || fetchingMore) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prev => prev + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, fetchingMore, hasMore]);
 
   useEffect(() => {
     getTVGenres()
@@ -316,7 +303,7 @@ const WebSeries = ({ addToFavorite, favorites }) => {
               ) : (
                 <div className="movies-grid">
                   {series.map((item, i) => (
-                    <div key={item.id} ref={i === series.length - 1 ? lastElementRef : null}>
+                    <div key={item.id}>
                       <MovieCard
                         movie={item}
                         index={i}

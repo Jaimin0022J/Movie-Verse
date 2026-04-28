@@ -71,9 +71,8 @@ const Home = ({ addToFavorite, favorites }) => {
         return await getPopularMovies(p);
       };
 
-      // Fetch two pages to ensure we have at least 25 movies (TMDB returns 20 per page)
-      const [page1, page2] = await Promise.all([getResults(1), getResults(2)]);
-      const combinedResults = [...page1, ...page2].slice(0, 25);
+      // Fetch one page to display exactly 20 items and improve performance
+      const combinedResults = await getResults(1);
 
       setMovies(combinedResults);
 
