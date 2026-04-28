@@ -160,7 +160,7 @@ const Moviepage = () => {
 
   const title = movie.title || movie.name || "Untitled";
   const poster = getPosterUrl(movie.poster_path, "w500");
-  const backdrop = getBackdropUrl(movie.backdrop_path, "w1280");
+  const backdrop = getBackdropUrl(movie.backdrop_path, "w780");
   const rating = movie.vote_average?.toFixed(1) || "N/A";
   const ratingPct = Math.round((movie.vote_average || 0) * 10);
   const cast = movie.credits?.cast?.slice(0, 8) || [];
