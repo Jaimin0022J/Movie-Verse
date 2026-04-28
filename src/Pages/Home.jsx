@@ -125,7 +125,7 @@ const Home = ({ addToFavorite, favorites }) => {
   const heroMovie = heroMovies[heroIndex] || null;
 
   const backdrop = heroMovie?.backdrop_path
-    ? getBackdropUrl(heroMovie.backdrop_path)
+    ? getBackdropUrl(heroMovie.backdrop_path, "w780")
     : null;
 
   const isSearching = searchMovie.trim().length > 0;

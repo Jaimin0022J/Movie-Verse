@@ -133,7 +133,7 @@ const WebSeries = ({ addToFavorite, favorites }) => {
   }, [heroSeries, searchQuery]);
 
   const heroItem = heroSeries[heroIndex] || null;
-  const backdrop = heroItem?.backdrop_path ? getBackdropUrl(heroItem.backdrop_path) : null;
+  const backdrop = heroItem?.backdrop_path ? getBackdropUrl(heroItem.backdrop_path, "w780") : null;
   const isSearching = searchQuery.trim().length > 0;
 
   return (

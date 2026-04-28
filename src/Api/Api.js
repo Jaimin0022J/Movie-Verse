@@ -256,5 +256,5 @@ export async function getTVSeasonDetails(id, seasonNumber) {
 }
 
 export const IMAGE_BASE = "https://image.tmdb.org/t/p";
-export const getPosterUrl  = (path, size = "w500")   => path ? `${IMAGE_BASE}/${size}${path}` : null;
-export const getBackdropUrl = (path, size = "w780") => path ? `${IMAGE_BASE}/${size}${path}` : null;
+export const getPosterUrl  = (path, size = "w342")   => path ? `${IMAGE_BASE}/${size}${path}` : null;
+export const getBackdropUrl = (path, size = "w300") => path ? `${IMAGE_BASE}/${size}${path}` : null;
