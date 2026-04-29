@@ -10,6 +10,16 @@ const SERVERS = [
       mediaType === 'tv' 
         ? `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}`
         : `https://vidlink.pro/movie/${tmdbId}`
+  },
+  {
+    id: "superembed",
+    name: "SuperEmbed",
+    description: "(Alternative Multi-Server)",
+    referrerPolicy: "origin",
+    getUrl: (mediaType, tmdbId, season, episode) => 
+      mediaType === 'tv' 
+        ? `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`
+        : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`
   }
 ];
 
