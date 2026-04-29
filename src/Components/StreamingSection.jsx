@@ -8,8 +8,8 @@ const SERVERS = [
     referrerPolicy: "origin",
     getUrl: (mediaType, tmdbId, season, episode) => 
       mediaType === 'tv' 
-        ? `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`
-        : `https://vidsrc.to/embed/movie/${tmdbId}`
+        ? `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&sea=${season}&epi=${episode}`
+        : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`
   }
 ];
 
