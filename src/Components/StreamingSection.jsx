@@ -4,51 +4,25 @@ const SERVERS = [
   {
     id: "superembed",
     name: "SuperEmbed",
-    description: "(Alternative Multi-Server)",
+    description: "(Multi-audio / Hindi)",
     referrerPolicy: "origin",
     getUrl: (mediaType, tmdbId, season, episode) => 
       mediaType === 'tv' 
-        ? `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&sea=${season}&epi=${episode}`
-        : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`
+        ? `https://multiembed.cc/embed/tv/${tmdbId}/${season}/${episode}`
+        : `https://multiembed.cc/embed/movie/${tmdbId}`
   }
 ];
 
 export default function StreamingSection({ tmdbId, mediaType = "movie", season = 1, episode = 1, backdrop }) {
-  const [selectedServerId, setSelectedServerId] = useState(SERVERS[0].id);
+  const selectedServer = SERVERS[0];
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
 
-  const selectedServer = SERVERS.find(s => s.id === selectedServerId) || SERVERS[0];
   const currentUrl = selectedServer.getUrl(mediaType, tmdbId, season, episode);
 
   return (
-    <div id="streaming-section-target" className="w-full max-w-5xl mx-auto px-[10px] lg:px-8 py-10">
-      {/* Server Selection Header */}
-      {isPlayerVisible && (
-        <div className="flex flex-col sm:flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md p-4 rounded-t-xl border-x border-t border-blue-500/50 mb-0">
-          <div className="text-white flex items-center gap-2 mb-3 sm:mb-0">
-            <i className="ri-server-line text-blue-400"></i>
-            <span className="font-semibold text-sm">Select Server:</span>
-          </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {SERVERS.map((server) => (
-              <button
-                key={server.id}
-                onClick={() => setSelectedServerId(server.id)}
-                className={`px-4 py-2 rounded-md text-xs font-bold transition-all ${
-                  selectedServerId === server.id
-                    ? "bg-blue-600 text-white shadow-[0_0_10px_rgba(37,99,235,0.6)] border border-blue-400"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600 hover:text-white"
-                }`}
-              >
-                {server.name} <span className="opacity-70 font-normal ml-1 hidden sm:inline">{server.description}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
+    <div className="w-full max-w-5xl mx-auto px-4 py-10">
       {/* Video Player Container */}
-      <div className={`relative w-full aspect-video ${isPlayerVisible ? 'rounded-b-xl' : 'rounded-xl'} border ${isPlayerVisible ? 'border-t-0' : ''} border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] overflow-hidden bg-black group transition-all duration-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.8)]`}>
+      <div className="relative w-full aspect-video rounded-xl border border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] overflow-hidden bg-black group transition-all duration-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.8)]">
         {!isPlayerVisible ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             {backdrop && (
