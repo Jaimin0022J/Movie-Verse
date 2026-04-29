@@ -1,5 +1,5 @@
 const API_KEY = "435cfbd8a60ad630664daddfec1e546e";
-const BASE_URL = "/api/tmdb";
+const BASE_URL = "https://api.themoviedb.org/3";
 
 const apiCache = new Map();
 
