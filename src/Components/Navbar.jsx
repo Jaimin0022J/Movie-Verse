@@ -77,9 +77,9 @@ const Navbar = ({
               }}
             >
               <img 
-                src="/logo.png" 
+                src="/logo.svg" 
                 alt="MovieVerse Logo" 
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 12 }} 
+                style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 12, padding: "4px" }} 
               />
             </div>
             <span
