@@ -539,13 +539,15 @@ const Moviepage = () => {
                 </div>
               )}
               
-              <StreamingSection 
-                tmdbId={id} 
-                mediaType={isTV ? "tv" : "movie"} 
-                season={selectedSeason} 
-                episode={selectedEpisode}
-                backdrop={backdrop}
-              />
+              <div style={{ marginTop: !isTV ? 40 : 0 }}>
+                <StreamingSection 
+                  tmdbId={id} 
+                  mediaType={isTV ? "tv" : "movie"} 
+                  season={selectedSeason} 
+                  episode={selectedEpisode}
+                  backdrop={backdrop}
+                />
+              </div>
             </div>
           )}
 
