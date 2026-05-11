@@ -1,5 +1,6 @@
 const API_KEY = "435cfbd8a60ad630664daddfec1e546e";
-const BASE_URL = "https://api.themoviedb.org/3";
+// Using alternate domain to help bypass ISP blocks (common in India)
+const BASE_URL = "https://api.tmdb.org/3";
 
 const apiCache = new Map();
 
