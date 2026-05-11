@@ -120,6 +120,16 @@ export async function getBollywoodMovies(page = 1) {
   return data.results;
 }
 
+export async function getAnimeMovies(page = 1) {
+  const today = new Date().toISOString().split("T")[0];
+  const data = await handleResponse(
+    await proxyFetch(
+      `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=16&with_original_language=ja&sort_by=primary_release_date.desc&primary_release_date.lte=${today}&vote_count.gte=5&page=${page}`
+    )
+  );
+  return data.results;
+}
+
 export async function getLatestMovies(page = 1) {
   const today = new Date().toISOString().split("T")[0];
   const data = await handleResponse(
@@ -242,6 +252,16 @@ export async function getBollywoodTV(page = 1) {
   const data = await handleResponse(
     await proxyFetch(
       `${BASE_URL}/discover/tv?api_key=${API_KEY}&with_original_language=hi&sort_by=first_air_date.desc&first_air_date.lte=${today}&vote_count.gte=5&page=${page}`
+    )
+  );
+  return data.results;
+}
+
+export async function getAnimeTV(page = 1) {
+  const today = new Date().toISOString().split("T")[0];
+  const data = await handleResponse(
+    await proxyFetch(
+      `${BASE_URL}/discover/tv?api_key=${API_KEY}&with_genres=16&with_original_language=ja&sort_by=first_air_date.desc&first_air_date.lte=${today}&vote_count.gte=5&page=${page}`
     )
   );
   return data.results;

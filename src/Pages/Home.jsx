@@ -14,6 +14,7 @@ import {
   getBollywoodMovies,
   getLatestMovies,
   getLatestTV,
+  getAnimeMovies,
 } from "../Api/Api";
 
 const TABS = [
@@ -23,6 +24,7 @@ const TABS = [
   { id: "top_rated", label: "⭐ Top Rated",    icon: "ri-award-fill" },
   { id: "now",       label: "🎭 Now Playing",  icon: "ri-live-fill" },
   { id: "bollywood", label: "🇮🇳 Bollywood",   icon: "ri-map-pin-2-fill" },
+  { id: "anime",     label: "🌸 Anime",       icon: "ri-play-circle-fill" },
 ];
 
 const Home = ({ addToFavorite, favorites }) => {
@@ -67,6 +69,7 @@ const Home = ({ addToFavorite, favorites }) => {
         if (activeT === "top_rated") return await getTopRatedMovies(p);
         if (activeT === "now")       return await getNowPlaying(p);
         if (activeT === "bollywood") return await getBollywoodMovies(p);
+        if (activeT === "anime")     return await getAnimeMovies(p);
         if (activeT === "latest")    return await getLatestMovies(p);
         return await getPopularMovies(p);
       };
@@ -74,10 +77,15 @@ const Home = ({ addToFavorite, favorites }) => {
       // Fetch one page to display exactly 20 items and improve performance
       const combinedResults = await getResults(1);
 
-      setMovies(combinedResults);
+      // Filter out items that do not have images (poster)
+      const validResults = combinedResults.filter(movie => movie.poster_path);
 
-      if (combinedResults.length > 0) {
-        setHeroMovies(combinedResults.slice(0, 5));
+      setMovies(validResults);
+
+      if (validResults.length > 0) {
+        // Ensure hero movies have backdrops
+        const validHero = validResults.filter(m => m.backdrop_path);
+        setHeroMovies(validHero.length > 0 ? validHero.slice(0, 5) : validResults.slice(0, 5));
         setHeroIndex(0);
       } else {
         setHeroMovies([]);

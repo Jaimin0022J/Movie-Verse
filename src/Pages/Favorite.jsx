@@ -1,9 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MovieCard from "../Components/MovieCard";
 import Navbar from "../Components/Navbar";
 
 const Favorite = ({ favorites = [], removeFromFavorite }) => {
+  const navigate = useNavigate();
+
   return (
     <div
       style={{
@@ -13,6 +15,35 @@ const Favorite = ({ favorites = [], removeFromFavorite }) => {
       }}
     >
       <Navbar favorites={favorites} />
+
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          position: "fixed",
+          top: "92px",
+          left: "24px",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          background: "rgba(0, 0, 0, 0.5)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          borderRadius: "50px",
+          padding: "10px 20px",
+          color: "#ffffff",
+          cursor: "pointer",
+          fontSize: "14px",
+          fontWeight: "600",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          zIndex: 1000,
+          transition: "all 0.3s ease",
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = "rgba(0, 0, 0, 0.7)"}
+        onMouseLeave={e => e.currentTarget.style.background = "rgba(0, 0, 0, 0.5)"}
+      >
+        <i className="ri-arrow-left-line" />
+        Back
+      </button>
 
       <div
         style={{

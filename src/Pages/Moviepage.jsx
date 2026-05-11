@@ -28,6 +28,8 @@ const Moviepage = () => {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
+  const [isSeasonOpen, setIsSeasonOpen] = useState(false);
+  const [isEpisodeOpen, setIsEpisodeOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -455,43 +457,84 @@ const Moviepage = () => {
           ))}
         </div>
 
-        <div className="animate-fade-in" style={{ paddingTop: 32, minHeight: 300 }}>
+        <div className="animate-fade-in" style={{ paddingTop: 24, minHeight: 300 }}>
 
 
           {activeTab === "stream" && (
-            <div className="animate-fade-in" style={{ width: "100%", maxWidth: 1000, margin: "0 auto", padding: "10vh 0" }}>
+            <div className="animate-fade-in" style={{ width: "100%", maxWidth: 1000, margin: "0 auto", padding: "0 0 20px" }}>
               {isTV && movie.seasons && (
-                <div style={{ display: "flex", gap: 12, marginBottom: 20, justifyContent: "flex-end", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--glass-bg)", padding: "4px 12px", borderRadius: 8, border: "1px solid var(--glass-border)" }}>
-                    <span style={{ color: "var(--text-muted)", fontSize: 14 }}>Season</span>
-                    <select 
-                      value={selectedSeason}
-                      onChange={(e) => {
-                         setSelectedSeason(e.target.value);
-                         setSelectedEpisode(1);
-                      }}
-                      style={{ background: "transparent", border: "none", color: "var(--text-primary)", outline: "none", cursor: "pointer", fontSize: 16 }}
+                <div className="flex flex-wrap gap-4 mb-1 justify-end items-center relative z-[100]">
+                  <div className="flex items-center gap-3 bg-[rgba(30,30,40,0.7)] hover:bg-[rgba(40,40,55,0.9)] transition-colors duration-300 px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.08)] shadow-[0_4px_12px_rgba(0,0,0,0.2)] backdrop-blur-md">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[rgba(229,9,20,0.15)] text-[var(--accent-red)]">
+                      <i className="ri-tv-line text-lg" />
+                    </div>
+                    <span className="text-[var(--text-muted)] text-sm font-medium">Season</span>
+                    <div 
+                      className="relative flex items-center cursor-pointer focus:outline-none"
+                      tabIndex={0}
+                      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setIsSeasonOpen(false); }}
+                      onClick={() => setIsSeasonOpen(!isSeasonOpen)}
                     >
-                      {movie.seasons.filter(s => s.season_number > 0).map(s => (
-                        <option key={s.season_number} value={s.season_number} style={{ background: "var(--bg-primary)" }}>
-                          {s.season_number}
-                        </option>
-                      ))}
-                    </select>
+                      <div className="flex items-center gap-2 pr-2">
+                        <span className="text-[var(--text-primary)] text-base font-bold select-none">{selectedSeason}</span>
+                        <i className={`ri-arrow-down-s-line text-[var(--text-primary)] transition-transform duration-300 ${isSeasonOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                      
+                      {isSeasonOpen && (
+                        <div className="absolute top-full mt-3 right-0 w-36 bg-[rgba(20,20,30,0.95)] border border-[rgba(255,255,255,0.1)] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl z-50 flex flex-col max-h-[250px] overflow-y-auto">
+                          {movie.seasons.filter(s => s.season_number > 0).map(s => (
+                            <button
+                              key={s.season_number}
+                              className={`text-left px-4 py-3 text-sm font-medium transition-colors hover:bg-[rgba(229,9,20,0.2)] hover:text-[var(--accent-red)] ${selectedSeason == s.season_number ? 'bg-[rgba(229,9,20,0.1)] text-[var(--accent-red)]' : 'text-[var(--text-secondary)]'}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedSeason(s.season_number);
+                                setSelectedEpisode(1);
+                                setIsSeasonOpen(false);
+                              }}
+                            >
+                              Season {s.season_number}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--glass-bg)", padding: "4px 12px", borderRadius: 8, border: "1px solid var(--glass-border)" }}>
-                    <span style={{ color: "var(--text-muted)", fontSize: 14 }}>Episode</span>
-                    <select 
-                      value={selectedEpisode}
-                      onChange={(e) => setSelectedEpisode(e.target.value)}
-                      style={{ background: "transparent", border: "none", color: "var(--text-primary)", outline: "none", cursor: "pointer", fontSize: 16 }}
+
+                  <div className="flex items-center gap-3 bg-[rgba(30,30,40,0.7)] hover:bg-[rgba(40,40,55,0.9)] transition-colors duration-300 px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.08)] shadow-[0_4px_12px_rgba(0,0,0,0.2)] backdrop-blur-md">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[rgba(229,9,20,0.15)] text-[var(--accent-red)]">
+                      <i className="ri-play-list-2-line text-lg" />
+                    </div>
+                    <span className="text-[var(--text-muted)] text-sm font-medium">Episode</span>
+                    <div 
+                      className="relative flex items-center cursor-pointer focus:outline-none"
+                      tabIndex={0}
+                      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setIsEpisodeOpen(false); }}
+                      onClick={() => setIsEpisodeOpen(!isEpisodeOpen)}
                     >
-                      {Array.from({ length: movie.seasons.find(s => s.season_number == selectedSeason)?.episode_count || 1 }).map((_, i) => (
-                        <option key={i + 1} value={i + 1} style={{ background: "var(--bg-primary)" }}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </select>
+                      <div className="flex items-center gap-2 pr-2">
+                        <span className="text-[var(--text-primary)] text-base font-bold select-none">{selectedEpisode}</span>
+                        <i className={`ri-arrow-down-s-line text-[var(--text-primary)] transition-transform duration-300 ${isEpisodeOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                      
+                      {isEpisodeOpen && (
+                        <div className="absolute top-full mt-3 right-0 w-36 bg-[rgba(20,20,30,0.95)] border border-[rgba(255,255,255,0.1)] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl z-50 flex flex-col max-h-[250px] overflow-y-auto">
+                          {Array.from({ length: movie.seasons.find(s => s.season_number == selectedSeason)?.episode_count || 1 }).map((_, i) => (
+                            <button
+                              key={i + 1}
+                              className={`text-left px-4 py-3 text-sm font-medium transition-colors hover:bg-[rgba(229,9,20,0.2)] hover:text-[var(--accent-red)] ${selectedEpisode == i + 1 ? 'bg-[rgba(229,9,20,0.1)] text-[var(--accent-red)]' : 'text-[var(--text-secondary)]'}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedEpisode(i + 1);
+                                setIsEpisodeOpen(false);
+                              }}
+                            >
+                              Episode {i + 1}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

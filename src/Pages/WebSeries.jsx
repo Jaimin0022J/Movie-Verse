@@ -13,6 +13,7 @@ import {
   getBackdropUrl,
   getLatestTV,
   getBollywoodTV,
+  getAnimeTV,
 } from "../Api/Api";
 
 const TABS = [
@@ -22,6 +23,7 @@ const TABS = [
   { id: "top_rated", label: "⭐ Top Rated",    icon: "ri-award-fill" },
   { id: "on_the_air",label: "📺 On The Air",  icon: "ri-broadcast-line" },
   { id: "bollywood", label: "🇮🇳 Bollywood",   icon: "ri-map-pin-2-fill" },
+  { id: "anime",     label: "🌸 Anime",       icon: "ri-play-circle-fill" },
 ];
 
 const WebSeries = ({ addToFavorite, favorites }) => {
@@ -59,26 +61,31 @@ const WebSeries = ({ addToFavorite, favorites }) => {
     setError(null);
 
     try {
-      let results;
+      let rawResults;
       if (activeSearch.trim()) {
-        results = await searchTV(activeSearch, pageNum);
+        rawResults = await searchTV(activeSearch, pageNum);
       } else if (activeGen) {
-        results = await getTVSeriesByGenre(activeGen, pageNum);
+        rawResults = await getTVSeriesByGenre(activeGen, pageNum);
       } else {
-        if (activeT === "trending")      results = await getTrendingTV("week", pageNum);
-        else if (activeT === "popular")  results = await getPopularTV(pageNum);
-        else if (activeT === "top_rated") results = await getTopRatedTV(pageNum);
-        else if (activeT === "on_the_air")results = await getOnTheAirTV(pageNum);
-        else if (activeT === "latest")   results = await getLatestTV(pageNum);
-        else if (activeT === "bollywood") results = await getBollywoodTV(pageNum);
-        else results = await getPopularTV(pageNum);
+        if (activeT === "trending")      rawResults = await getTrendingTV("week", pageNum);
+        else if (activeT === "popular")  rawResults = await getPopularTV(pageNum);
+        else if (activeT === "top_rated") rawResults = await getTopRatedTV(pageNum);
+        else if (activeT === "on_the_air")rawResults = await getOnTheAirTV(pageNum);
+        else if (activeT === "latest")   rawResults = await getLatestTV(pageNum);
+        else if (activeT === "bollywood") rawResults = await getBollywoodTV(pageNum);
+        else if (activeT === "anime")     rawResults = await getAnimeTV(pageNum);
+        else rawResults = await getPopularTV(pageNum);
       }
 
-      setSeries(prev => pageNum === 1 ? results : [...prev, ...results]);
-      setHasMore(results.length > 0);
+      // Filter out items that do not have images (poster)
+      const validResults = rawResults.filter(item => item.poster_path);
 
-      if (pageNum === 1 && results.length > 0) {
-        setHeroSeries(results.slice(0, 5));
+      setSeries(prev => pageNum === 1 ? validResults : [...prev, ...validResults]);
+      setHasMore(rawResults.length > 0);
+
+      if (pageNum === 1 && validResults.length > 0) {
+        const validHero = validResults.filter(m => m.backdrop_path);
+        setHeroSeries(validHero.length > 0 ? validHero.slice(0, 5) : validResults.slice(0, 5));
         setHeroIndex(0);
       } else if (pageNum === 1) {
         setHeroSeries([]);
