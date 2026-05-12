@@ -70,7 +70,7 @@ export async function searchMovies(query, page = 1) {
 
 export async function getMovieDetails(id) {
   const res = await proxyFetch(
-    `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=credits,similar,external_ids`
+    `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=credits,similar,external_ids,images`
   );
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   const data = await res.json();
@@ -190,7 +190,7 @@ export async function searchTV(query, page = 1) {
 
 export async function getTVDetails(id) {
   const res = await proxyFetch(
-    `${BASE_URL}/tv/${id}?api_key=${API_KEY}&append_to_response=credits,similar,recommendations,external_ids`
+    `${BASE_URL}/tv/${id}?api_key=${API_KEY}&append_to_response=credits,similar,recommendations,external_ids,images`
   );
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   const data = await res.json();

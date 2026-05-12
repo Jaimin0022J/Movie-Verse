@@ -429,7 +429,7 @@ const Moviepage = () => {
             overflowX: "auto",
           }}
         >
-          {["stream", "about", "cast", "trailer", "watch", "similar"].map((tab) => (
+          {["stream", "about", "screenshots", "cast", "trailer", "watch", "similar"].map((tab) => (
             <button
               key={tab}
               className="content-tab"
@@ -449,6 +449,7 @@ const Moviepage = () => {
             >
               {tab === "stream"  && <><i className="ri-play-circle-fill" style={{ marginRight: 6 }} />Stream</>}
               {tab === "about"   && <><i className="ri-information-line" style={{ marginRight: 6 }} />About</>}
+              {tab === "screenshots" && <><i className="ri-image-line" style={{ marginRight: 6 }} />Screenshots</>}
               {tab === "cast"    && <><i className="ri-group-line" style={{ marginRight: 6 }} />Cast</>}
               {tab === "trailer" && <><i className="ri-youtube-fill" style={{ marginRight: 6 }} />Trailer</>}
               {tab === "watch"   && <><i className="ri-tv-2-line" style={{ marginRight: 6 }} />Watch On</>}
@@ -872,6 +873,45 @@ const Moviepage = () => {
             );
           })()}
 
+          {activeTab === "screenshots" && (
+            <div style={{ paddingBottom: 15 }}>
+              {!movie.images || (!movie.images.backdrops?.length && !movie.images.posters?.length) ? (
+                <p style={{ color: "var(--text-muted)" }}>No screenshots available.</p>
+              ) : (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                    gap: 16,
+                  }}
+                >
+                  {(movie.images.backdrops || []).slice(0, 9).map((img, i) => (
+                    <div
+                      key={img.file_path}
+                      className="animate-fade-in"
+                      style={{
+                        animationDelay: `${i * 50}ms`,
+                        borderRadius: 12,
+                        overflow: "hidden",
+                        aspectRatio: "16/9",
+                        border: "1px solid var(--glass-border-light)",
+                        background: "var(--bg-secondary)",
+                      }}
+                    >
+                      <img
+                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
+                        alt="Screenshot"
+                        style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
+                        loading="lazy"
+                        onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                        onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
 
 
