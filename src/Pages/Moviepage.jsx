@@ -24,7 +24,7 @@ const Moviepage = () => {
   const [trailerKey, setTrailerKey] = useState(null);
   const [watchProviders, setWatchProviders] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("about");
+  const [activeTab, setActiveTab] = useState(location.state?.tab || "about");
   const [imgLoaded, setImgLoaded] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
@@ -33,10 +33,24 @@ const Moviepage = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!loading && location.state?.tab === "stream") {
+      const timer = setTimeout(() => {
+        const target = document.getElementById("movie-tabs-container");
+        if (target) {
+          const topOffset = target.getBoundingClientRect().top + window.pageYOffset - 110;
+          window.scrollTo({ top: topOffset, behavior: "smooth" });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, location.state]);
 
   useEffect(() => {
     // Component remounts on ID change due to key prop in App.jsx
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (location.state?.tab !== "stream") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     if (isTV) {
       getTVDetails(id)
@@ -53,7 +67,7 @@ const Moviepage = () => {
         .then((results) => {
           const trailer = results.find(
             (v) => (v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser"))
-          );
+          ) || results.find((v) => v.site === "YouTube");
           if (trailer) setTrailerKey(trailer.key);
         })
         .catch(() => {});
@@ -161,8 +175,8 @@ const Moviepage = () => {
   if (!movie) return null;
 
   const title = movie.title || movie.name || "Untitled";
-  const poster = getPosterUrl(movie.poster_path, "w342");
-  const backdrop = getBackdropUrl(movie.backdrop_path, "w780");
+  const poster = getPosterUrl(movie.poster_path, "w780");
+  const backdrop = getBackdropUrl(movie.backdrop_path, "w1280");
   const rating = movie.vote_average?.toFixed(1) || "N/A";
   const ratingPct = Math.round((movie.vote_average || 0) * 10);
   const cast = movie.credits?.cast?.slice(0, 8) || [];
@@ -262,21 +276,28 @@ const Moviepage = () => {
       >
         <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
           <div
-            className="animate-slide-left shrink-0 w-[200px] md:w-[260px] min-h-[300px] md:min-h-[390px] rounded-[20px] overflow-hidden shadow-[var(--shadow-card)] border border-[var(--glass-border-light)] bg-[var(--bg-card)] mx-auto md:mx-0"
+            className="animate-slide-left shrink-0 w-[200px] md:w-[260px] min-h-[300px] md:min-h-[390px] rounded-[20px] overflow-hidden shadow-[var(--shadow-card)] border border-[var(--glass-border-light)] bg-[var(--bg-card)] mx-auto md:mx-0 relative"
           >
             {!imgLoaded && (
               <div
                 className="skeleton"
-                style={{ width: "100%", height: "100%", minHeight: "300px" }}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
               />
             )}
               {poster && (
                 <img
                   src={poster}
                   alt={title}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   style={{
                     width: "100%",
-                    display: imgLoaded ? "block" : "none",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                    opacity: imgLoaded ? 1 : 0,
+                    transition: "opacity 0.35s ease",
                     borderRadius: 20,
                   }}
                   onLoad={() => setImgLoaded(true)}

@@ -8,25 +8,29 @@ import {
   getTopRatedTV,
   getOnTheAirTV,
   searchTV,
+  searchMulti,
   getTVGenres,
   getTVSeriesByGenre,
   getBackdropUrl,
+  getPosterUrl,
   getLatestTV,
   getBollywoodTV,
+  getIndianRealityAndTalkShows,
   getAnimeTV,
 } from "../Api/Api";
 
 const TABS = [
-  { id: "latest",   label: "🆕 Latest",       icon: "ri-calendar-check-fill" },
-  { id: "trending",  label: "🔥 Trending",   icon: "ri-fire-fill" },
-  { id: "popular",   label: "🎬 Popular",     icon: "ri-film-fill" },
-  { id: "top_rated", label: "⭐ Top Rated",    icon: "ri-award-fill" },
-  { id: "on_the_air",label: "📺 On The Air",  icon: "ri-broadcast-line" },
-  { id: "bollywood", label: "🇮🇳 Bollywood",   icon: "ri-map-pin-2-fill" },
-  { id: "anime",     label: "🌸 Anime",       icon: "ri-play-circle-fill" },
+  { id: "latest",     label: "🆕 Latest",                 icon: "ri-calendar-check-fill" },
+  { id: "reality_tv", label: "🎙️ Reality & Comedy Shows",  icon: "ri-mic-fill" },
+  { id: "trending",   label: "🔥 Trending",               icon: "ri-fire-fill" },
+  { id: "popular",    label: "🎬 Popular",                icon: "ri-film-fill" },
+  { id: "top_rated",  label: "⭐ Top Rated",             icon: "ri-award-fill" },
+  { id: "on_the_air", label: "📺 On The Air",            icon: "ri-broadcast-line" },
+  { id: "bollywood",  label: "🇮🇳 Bollywood",             icon: "ri-map-pin-2-fill" },
+  { id: "anime",      label: "🌸 Anime",                 icon: "ri-play-circle-fill" },
 ];
 
-const WebSeries = ({ addToFavorite, favorites }) => {
+const WebSeries = ({ addToFavorite, favorites = [] }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [series, setSeries] = useState([]);
@@ -63,11 +67,12 @@ const WebSeries = ({ addToFavorite, favorites }) => {
     try {
       let rawResults;
       if (activeSearch.trim()) {
-        rawResults = await searchTV(activeSearch, pageNum);
+        rawResults = await searchMulti(activeSearch, pageNum);
       } else if (activeGen) {
         rawResults = await getTVSeriesByGenre(activeGen, pageNum);
       } else {
-        if (activeT === "trending")      rawResults = await getTrendingTV("week", pageNum);
+        if (activeT === "reality_tv")    rawResults = await getIndianRealityAndTalkShows(pageNum);
+        else if (activeT === "trending")      rawResults = await getTrendingTV("week", pageNum);
         else if (activeT === "popular")  rawResults = await getPopularTV(pageNum);
         else if (activeT === "top_rated") rawResults = await getTopRatedTV(pageNum);
         else if (activeT === "on_the_air")rawResults = await getOnTheAirTV(pageNum);
@@ -77,8 +82,14 @@ const WebSeries = ({ addToFavorite, favorites }) => {
         else rawResults = await getPopularTV(pageNum);
       }
 
-      // Filter out items that do not have images (poster)
-      const validResults = rawResults.filter(item => item.poster_path);
+      // Filter out items without posters and exclude unreleased shows
+      const today = new Date().toISOString().split("T")[0];
+      const validResults = rawResults.filter(item => {
+        if (!item.poster_path) return false;
+        const rDate = item.first_air_date || item.release_date;
+        if (rDate && rDate > today) return false;
+        return true;
+      });
 
       setSeries(prev => pageNum === 1 ? validResults : [...prev, ...validResults]);
       setHasMore(rawResults.length > 0);
@@ -139,8 +150,36 @@ const WebSeries = ({ addToFavorite, favorites }) => {
     return () => clearInterval(interval);
   }, [heroSeries, searchQuery]);
 
+  // Preload next hero backdrop after initial page paint to save bandwidth
+  useEffect(() => {
+    if (heroSeries.length <= 1) return;
+    const timer = setTimeout(() => {
+      const nextIdx = (heroIndex + 1) % heroSeries.length;
+      const nextItem = heroSeries[nextIdx];
+      const nextBackdrop = nextItem?.backdrop_path
+        ? getBackdropUrl(nextItem.backdrop_path, "w1280")
+        : nextItem?.poster_path
+        ? getPosterUrl(nextItem.poster_path, "w780")
+        : null;
+      if (nextBackdrop) {
+        const img = new Image();
+        img.src = nextBackdrop;
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [heroIndex, heroSeries]);
+
   const heroItem = heroSeries[heroIndex] || null;
-  const backdrop = heroItem?.backdrop_path ? getBackdropUrl(heroItem.backdrop_path, "w780") : null;
+  const backdrop = heroItem?.backdrop_path
+    ? getBackdropUrl(heroItem.backdrop_path, "w1280")
+    : heroItem?.poster_path
+    ? getPosterUrl(heroItem.poster_path, "w780")
+    : null;
+
+  const heroPoster = heroItem?.poster_path
+    ? getPosterUrl(heroItem.poster_path, "w500")
+    : null;
+
   const isSearching = searchQuery.trim().length > 0;
 
   return (
@@ -155,7 +194,7 @@ const WebSeries = ({ addToFavorite, favorites }) => {
       <div className="page-enter" style={{ width: "100%" }}>
 
         {!isSearching && heroItem && (
-          <div style={{ position: "relative", height: "75vh", minHeight: 500, overflow: "hidden" }}>
+          <div style={{ position: "relative", height: "75vh", minHeight: 520, overflow: "hidden" }}>
             {backdrop && (
               <div style={{
                 position: "absolute",
@@ -163,9 +202,9 @@ const WebSeries = ({ addToFavorite, favorites }) => {
                 backgroundImage: `url(${backdrop})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center top",
-                opacity: heroLoaded ? 1 : 0,
-                transition: "opacity 1.2s ease",
-                transform: "scale(1.04)",
+                opacity: heroLoaded ? 1 : 0.8,
+                transition: "opacity 0.8s ease, transform 6s ease",
+                transform: heroLoaded ? "scale(1.02)" : "scale(1.05)",
               }}>
                 <img src={backdrop} alt="" style={{ display: "none" }} onLoad={() => setHeroLoaded(true)} />
               </div>
@@ -173,61 +212,178 @@ const WebSeries = ({ addToFavorite, favorites }) => {
             <div style={{ position: "absolute", inset: 0, background: "var(--overlay-hero-gradient)" }} />
             <div style={{ position: "absolute", inset: 0, background: "var(--overlay-hero-gradient-bot)" }} />
 
-            <div className="animate-slide-left" style={{ position: "absolute", bottom: "15%", left: "5%", right: "5%", maxWidth: 600 }}>
-              <div style={{
-                display: "inline-flex",
+            <div
+              className="animate-slide-left"
+              style={{
+                position: "absolute",
+                bottom: "12%",
+                left: "5%",
+                right: "5%",
+                maxWidth: 960,
+                display: "flex",
                 alignItems: "center",
-                gap: 6,
-                background: "var(--accent-purple)",
-                color: "white",
-                padding: "5px 14px",
-                borderRadius: 20,
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: 1,
-                textTransform: "uppercase",
-                marginBottom: 16,
-                boxShadow: "var(--shadow-glow-purple)",
-              }}>
-                <i className="ri-tv-line" />
-                Featured Series
-              </div>
-              <h1 style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: "clamp(28px, 5vw, 52px)",
-                fontWeight: 900,
-                lineHeight: 1.1,
-                letterSpacing: "-1px",
-                marginBottom: 16,
-                color: "var(--text-primary)",
-              }}>
-                {heroItem.name}
-              </h1>
-              {heroItem.overview && (
-                <p style={{
-                  color: "var(--text-secondary)",
-                  fontSize: 15,
-                  lineHeight: 1.7,
-                  marginBottom: 28,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}>
-                  {heroItem.overview}
-                </p>
+                gap: 24,
+                zIndex: 20,
+              }}
+            >
+              {heroPoster && (
+                <div
+                  className="hidden sm:block shrink-0 relative group"
+                  style={{
+                    width: "clamp(120px, 14vw, 185px)",
+                    borderRadius: 16,
+                    overflow: "hidden",
+                    boxShadow: "0 20px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.2)",
+                    cursor: "pointer",
+                    background: "var(--bg-secondary)",
+                  }}
+                  onClick={() => navigate(`/tv/${heroItem.id}`)}
+                >
+                  <img
+                    src={heroPoster}
+                    alt={heroItem.name}
+                    style={{
+                      width: "100%",
+                      aspectRatio: "2/3",
+                      objectFit: "cover",
+                      display: "block",
+                      transition: "transform 0.4s ease",
+                      imageRendering: "-webkit-optimize-contrast",
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+                    onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      background: "rgba(0, 0, 0, 0.75)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: 6,
+                      padding: "2px 6px",
+                      fontSize: 10,
+                      fontWeight: 800,
+                      color: "var(--accent-purple)",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    HD
+                  </div>
+                </div>
               )}
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-                <button onClick={() => navigate(`/tv/${heroItem.id}`)} className="btn-primary" style={{ background: "var(--accent-purple)", boxShadow: "0 8px 25px rgba(139, 92, 246, 0.35)" }}>
-                  <i className="ri-information-line" style={{ fontSize: 18 }} />
-                  View Details
-                </button>
-                <button onClick={() => addToFavorite(heroItem)} className="btn-secondary">
-                  <i className={`ri-heart-${favorites.some(f => f.id === heroItem.id) ? "fill" : "line"}`} />
-                  {favorites.some(f => f.id === heroItem.id) ? "Favorited" : "Add to List"}
-                </button>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  background: "var(--accent-purple)",
+                  color: "white",
+                  padding: "5px 14px",
+                  borderRadius: 20,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                  marginBottom: 14,
+                  boxShadow: "var(--shadow-glow-purple)",
+                }}>
+                  <i className="ri-tv-line" />
+                  Featured Series
+                </div>
+                <h1 style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "clamp(26px, 4.5vw, 48px)",
+                  fontWeight: 900,
+                  lineHeight: 1.1,
+                  letterSpacing: "-1px",
+                  marginBottom: 12,
+                  color: "var(--text-primary)",
+                }}>
+                  {heroItem.name}
+                </h1>
+                {heroItem.overview && (
+                  <p style={{
+                    color: "var(--text-secondary)",
+                    fontSize: 15,
+                    lineHeight: 1.6,
+                    marginBottom: 22,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    maxWidth: 580,
+                  }}>
+                    {heroItem.overview}
+                  </p>
+                )}
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+                  <button onClick={() => navigate(`/tv/${heroItem.id}`, { state: { tab: "stream" } })} className="btn-primary" style={{ background: "var(--accent-purple)", boxShadow: "0 8px 25px rgba(139, 92, 246, 0.35)" }}>
+                    <i className="ri-play-circle-fill" style={{ fontSize: 20 }} />
+                    Watch Now
+                  </button>
+                  <button onClick={() => addToFavorite(heroItem)} className="btn-secondary">
+                    <i className={`ri-heart-${favorites.some(f => f.id === heroItem.id) ? "fill" : "line"}`} />
+                    {favorites.some(f => f.id === heroItem.id) ? "Favorited" : "Add to List"}
+                  </button>
+                </div>
               </div>
             </div>
+
+            {/* Featured Series Carousel Thumbnails */}
+            {heroSeries.length > 1 && (
+              <div
+                className="hidden lg:flex items-center gap-2.5 absolute bottom-8 right-8 z-30"
+                style={{
+                  background: "rgba(10, 10, 18, 0.65)",
+                  padding: "8px 12px",
+                  borderRadius: 16,
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                }}
+              >
+                {heroSeries.map((s, idx) => {
+                  const thumb = getPosterUrl(s.poster_path, "w185");
+                  const isActive = idx === heroIndex;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setHeroLoaded(false);
+                        setHeroIndex(idx);
+                      }}
+                      style={{
+                        width: isActive ? 46 : 34,
+                        height: isActive ? 69 : 51,
+                        borderRadius: 8,
+                        overflow: "hidden",
+                        border: isActive ? "2px solid var(--accent-purple)" : "1px solid rgba(255,255,255,0.15)",
+                        boxShadow: isActive ? "0 0 16px rgba(139,92,246,0.7)" : "none",
+                        opacity: isActive ? 1 : 0.6,
+                        transform: isActive ? "scale(1.05)" : "scale(1)",
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
+                        padding: 0,
+                        background: "#111",
+                        flexShrink: 0,
+                      }}
+                      title={s.name}
+                    >
+                      <img
+                        src={thumb}
+                        alt={s.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

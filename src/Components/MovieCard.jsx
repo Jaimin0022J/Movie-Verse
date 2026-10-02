@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getPosterUrl } from "../Api/Api";
+import { getPosterUrl, getPosterSrcSet } from "../Api/Api";
 
 export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, index = 0 }) {
   const navigate = useNavigate();
   const [imgLoaded, setImgLoaded] = useState(false);
   const [heartRing, setHeartRing] = useState(false);
+  const imgRef = useRef(null);
 
-  const poster = getPosterUrl(movie.poster_path) || "https://placehold.co/500x750/1a1a27/5a5a70?text=No+Image";
+  const poster = getPosterUrl(movie.poster_path, "w342") || "https://placehold.co/342x513/1a1a27/5a5a70?text=No+Poster";
+  const posterSrcSet = getPosterSrcSet(movie.poster_path);
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
   
   // Handle both Movie (title, release_date) and TV (name, first_air_date)
@@ -15,9 +17,30 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
   const rawDate = movie.release_date || movie.first_air_date || "";
   const year = rawDate.split("-")[0] || "";
   
+  const today = new Date().toISOString().split("T")[0];
+  const isUpcoming = Boolean(rawDate && rawDate > today);
+  
   // Decide media type for navigation
   const isTV = !!movie.name || movie.first_air_date !== undefined || movie.media_type === "tv";
   const detailPath = isTV ? `/tv/${movie.id}` : `/movie/${movie.id}`;
+
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      setImgLoaded(true);
+    }
+  }, [poster]);
+
+  const handleImgError = (e) => {
+    const target = e.currentTarget;
+    if (!target.dataset.retried && movie.poster_path) {
+      target.dataset.retried = "true";
+      target.srcset = "";
+      target.src = `https://wsrv.nl/?url=https://image.tmdb.org/t/p/w342${movie.poster_path}&output=webp&q=80`;
+    } else {
+      target.src = "https://placehold.co/342x513/1a1a27/5a5a70?text=No+Poster";
+    }
+    setImgLoaded(true);
+  };
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
@@ -39,23 +62,34 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
       onClick={() => navigate(detailPath)}
     >
 
-      <div style={{ position: "relative", overflow: "hidden", background: "var(--bg-secondary)" }}>
+      <div style={{ position: "relative", overflow: "hidden", background: "var(--bg-secondary)", aspectRatio: "2/3" }}>
         {!imgLoaded && (
           <div
             className="skeleton"
-            style={{ width: "100%", aspectRatio: "2/3" }}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
           />
         )}
         <img
+          ref={imgRef}
           src={poster}
+          srcSet={posterSrcSet}
+          sizes="(max-width: 640px) 160px, (max-width: 1024px) 220px, 280px"
           alt={title}
+          loading={index < 4 ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={index < 2 ? "high" : "auto"}
           onLoad={() => setImgLoaded(true)}
+          onError={handleImgError}
           style={{
+            position: "relative",
+            zIndex: 1,
             width: "100%",
-            aspectRatio: "2/3",
+            height: "100%",
             objectFit: "cover",
-            display: imgLoaded ? "block" : "none",
-            transition: "transform 0.4s ease",
+            opacity: imgLoaded ? 1 : 0.85,
+            transition: "opacity 0.25s ease, transform 0.4s ease",
+            imageRendering: "-webkit-optimize-contrast",
+            display: "block",
           }}
         />
 
@@ -82,7 +116,7 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
               className="view-details-pill"
             >
               <i className="ri-play-circle-fill" style={{ fontSize: 20, color: "var(--accent-red)" }} />
-              View Details
+              Watch Now
             </div>
           </div>
         </div>
@@ -99,12 +133,30 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
           }}
         >
 
-          {rating !== "N/A" && (
+          {isUpcoming ? (
+            <span
+              className="rating-badge"
+              style={{
+                background: "linear-gradient(135deg, rgba(229, 9, 20, 0.95), rgba(139, 92, 246, 0.95))",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: 10,
+                padding: "3px 8px",
+                borderRadius: "6px",
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+              }}
+            >
+              <i className="ri-time-line" style={{ fontSize: 10 }} />
+              Soon
+            </span>
+          ) : rating !== "N/A" ? (
             <span className="rating-badge">
               <i className="ri-star-fill" style={{ fontSize: 10 }} />
               {rating}
             </span>
-          )}
+          ) : null}
 
           <button
             onClick={handleFavoriteClick}
@@ -163,19 +215,35 @@ export default function MovieCard({ movie, onFavorite, isFavorite, onRemove, ind
         </h3>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ color: "var(--text-muted)", fontSize: 11, fontWeight: 500 }}>{year}</span>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 3,
-              color: "var(--accent-gold)",
-              fontSize: 11,
-              fontWeight: 600,
-            }}
-          >
-            <i className="ri-star-fill" style={{ fontSize: 10 }} />
-            {rating}
-          </span>
+          {isUpcoming ? (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                color: "var(--accent-red)",
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+            >
+              <i className="ri-calendar-line" style={{ fontSize: 11 }} />
+              {rawDate ? new Date(rawDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Soon"}
+            </span>
+          ) : (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+                color: "var(--accent-gold)",
+                fontSize: 11,
+                fontWeight: 600,
+              }}
+            >
+              <i className="ri-star-fill" style={{ fontSize: 10 }} />
+              {rating}
+            </span>
+          )}
         </div>
       </div>
     </div>

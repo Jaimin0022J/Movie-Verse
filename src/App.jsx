@@ -8,12 +8,22 @@ import "./index.css";
 
 const App = () => {
   const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem("movieverse_favorites");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("movieverse_favorites");
+      if (!saved || saved === "undefined" || saved === "null") return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem("movieverse_favorites", JSON.stringify(favorites));
+    try {
+      localStorage.setItem("movieverse_favorites", JSON.stringify(favorites));
+    } catch {
+      // ignore storage quota issues
+    }
   }, [favorites]);
 
   const addToFavorite = (movie) => {

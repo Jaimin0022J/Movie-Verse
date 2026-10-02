@@ -29,3 +29,7 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+# Nested repos and tools
+RediculousCoding/
+

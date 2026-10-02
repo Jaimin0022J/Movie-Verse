@@ -3,8 +3,8 @@ import React, { useState } from "react";
 const SERVERS = [
   {
     id: "superembed",
-    name: "SuperEmbed",
-    description: "(Multi-audio / Hindi)",
+    name: "Server 1 (Fast)",
+    description: "Multiaudio / Hindi",
     referrerPolicy: "origin",
     getUrl: (mediaType, tmdbId, season, episode) => 
       mediaType === 'tv' 
@@ -14,13 +14,14 @@ const SERVERS = [
 ];
 
 export default function StreamingSection({ tmdbId, mediaType = "movie", season = 1, episode = 1, backdrop }) {
-  const selectedServer = SERVERS[0];
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
 
+  const selectedServer = SERVERS[0];
   const currentUrl = selectedServer.getUrl(mediaType, tmdbId, season, episode);
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-10">
+
       {/* Video Player Container */}
       <div className="relative w-full aspect-video rounded-xl border border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] overflow-hidden bg-black group transition-all duration-500 hover:shadow-[0_0_25px_rgba(59,130,246,0.8)]">
         {!isPlayerVisible ? (
